@@ -25,7 +25,6 @@ const nsfw = JSON.parse(fs.readFileSync('./src/nsfw.json'))
 const samih = JSON.parse(fs.readFileSync('./src/simi.json'))
 prefix = '!'
 blocked = []
-const zeks = "apivinz"
 
 function kyun(seconds){
   function pad(s){
@@ -131,7 +130,7 @@ async function starts() {
 			}
 
 			const botNumber = client.user.jid
-			const ownerNumber = ["62xxxxxxxxxxx@s.whatsapp.net"] // nomermu
+			const ownerNumber = ["6285799496179@s.whatsapp.net"] // replace this with your number
 			const isGroup = from.endsWith('@g.us')
 			const sender = isGroup ? mek.participant : mek.key.remoteJid
 			const groupMetadata = isGroup ? await client.groupMetadata(from) : ''
@@ -322,52 +321,123 @@ async function starts() {
 						})
 					})
 					break
-				
+				/*case 'meme':
+					meme = await kagApi.memes()
+					buffer = await getBuffer(`https://imgur.com/${meme.hash}.jpg`)
+					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
+					break*/
+				/*case 'memeindo':
+					memein = await kagApi.memeindo()
+					buffer = await getBuffer(`https://imgur.com/${memein.hash}.jpg`)
+					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
+					break*/
+				case 'setprefix':
+					if (args.length < 1) return
+					if (!isOwner) return reply(mess.only.ownerB)
+					prefix = args[0]
+					reply(`Prefix berhasil di ubah menjadi : ${prefix}`)
+					break
+				/*case 'loli':
+					loli.getSFWLoli(async (err, res) => {
+						if (err) return reply('❌ *ERROR* ❌')
+						buffer = await getBuffer(res.url)
+						client.sendMessage(from, buffer, image, {quoted: mek, caption: 'Ingat! Citai Lolimu'})
+					})
+					break
+				/*case 'nsfwloli':
+					if (!isNsfw) return reply('❌ *FALSE* ❌')
+					loli.getNSFWLoli(async (err, res) => {
+						if (err) return reply('❌ *ERROR* ❌')
+						buffer = await getBuffer(res.url)
+						client.sendMessage(from, buffer, image, {quoted: mek, caption: 'Jangan jadiin bahan buat comli om'})
+					})
+					break*/
 				case 'hilih':
 					if (args.length < 1) return reply('Teksnya mana um?')
 					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/hilih?teks=${body.slice(7)}`, {method: 'get'})
 					reply(anu.result)
 					break
-					
-				//other
-				case 'cekzodiak':
-				    if (args.length < 1) return reply('teksnya mana Ngab?')
-					argz = body.trim().split(' ')
-					const namamu = argz[1]
-					const tanggalee = argz[2]
-				    jar = await fetchJson(`https://arugaz.herokuapp.com/api/getzodiak?nama=${namamu}&tgl-bln-thn=${tanggalee}`, {method : 'get'}) 
-					reply(`*Cek Zodiak*\n\n*Nama :* ${nama}\n*Lahir :* ${lahir}\n*Ulang Tahun :* ${ultah}\n*Usia :* ${usia}\n*Zodiak :* ${zodiak}\n\n*AFS* _BOT_`)
+				case 'ytmp3':
+					if (args.length < 1) return reply('Urlnya mana um?')
+					if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply(mess.error.Iv)
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/yta?url=${args[0]}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					teks = `*Title* : ${anu.title}\n*Filesize* : ${anu.filesize}`
+					thumb = await getBuffer(anu.thumb)
+					client.sendMessage(from, thumb, image, {quoted: mek, caption: teks})
+					buffer = await getBuffer(anu.result)
+					client.sendMessage(from, buffer, audio, {mimetype: 'audio/mp4', filename: `${anu.title}.mp3`, quoted: mek})
 					break
-				case 'cekjodoh':
-				    if (args.length < 1) return reply('animenya apa Ngab?')
-					argz = body.trim().split(' ')
-					const namamu1 = argz[1]
-					const pasangan = argz[2]
-				    jar = await fetchJson(`https://arugaz.herokuapp.com/api/jodohku?nama=${namamu1}&pasangan=${pasangan}`, {method : 'get'}) 
-					teks = `*Cek Jodoh*\n\n*Nama :* ${jar.nama}\n*Pasangan :* ${jar.pasangan}\n*Positif :* ${jar.positif}\n*Negatif :* ${jar.negatif}\n\n*A F S* _BOT_`
-					thumb = await getBuffer(jar.gambar)
-					client.sendMessage(from, gambar, image, {quoted: mek, caption: teks})
-					break
-				case 'happymod':
-				    if (args.length < 1) return reply('Mau Cari aplikasi apa Ngab?')
-				    jar = await fetchJson(`https://api.zeks.xyz/api/happymod?apikey=${zeks}&q=${body.slice(10)}`, {method : 'get'}) 
-					let jarapk = jar.result[Math.floor(Math.random( ) * jar.result.length)]
-					teks = `*Happy Mod*\n\n*title :* ${jarapk.title}\n*Rating :* ${jarapk.rating}\n*Url :* ${jarapk.url}\n\n*A F S* _BOT_`
-					thumb = await getBuffer(jarapk.thumb)
-					client.sendMessage(from, gambar, image, {quoted: mek, caption: teks})
-					break
-				case 'translate':
-					if (args.length < 1) return reply('Format Salah Ngab\nContoh : !translate |id|en|namaku ardan')
-					argz = body.trim().split('|')
-					const bahasa1 = argz[1]
-					const bahasa2 = argz[2]
-					const terjemahkan = argz[3]
-					anu = await fetchJson(`https://docs-jojo.herokuapp.com/api/translate?text=${terjemahkan}&from=${bahasa1}&to=${bahasa2}`, {method: 'get'})
-					reply(`*AFS Translate*\n\nDari : *${anu.from}*\nKe : *${anu.to}*\nTeks : *${anu.original_text}*\nHasil : *${anu.translated_text}*\n\n*AFS* _BOT_`)
-					break
-					
-					
-				//grup
+				/*case 'ytsearch':
+					if (args.length < 1) return reply('Yang mau di cari apaan? titit?')
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/ytsearch?q=${body.slice(10)}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					teks = '=================\n'
+					for (let i of anu.result) {
+						teks += `*Title* : ${i.title}\n*Id* : ${i.id}\n*Published* : ${i.publishTime}\n*Duration* : ${i.duration}\n*Views* : ${h2k(i.views)}\n=================\n`
+					}
+					reply(teks.trim())
+					break*/
+				/*case 'tiktok':
+					if (args.length < 1) return reply('Urlnya mana um?')
+					if (!isUrl(args[0]) && !args[0].includes('tiktok.com')) return reply(mess.error.Iv)
+					reply(mess.wait)
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/tiktok?url=${args[0]}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					buffer = await getBuffer(anu.result)
+					client.sendMessage(from, buffer, video, {quoted: mek})
+					break*/
+				/*case 'tiktokstalk':
+					try {
+						if (args.length < 1) return client.sendMessage(from, 'Usernamenya mana um?', text, {quoted: mek})
+						let { user, stats } = await tiktod.getUserProfileInfo(args[0])
+						reply(mess.wait)
+						teks = `*ID* : ${user.id}\n*Username* : ${user.uniqueId}\n*Nickname* : ${user.nickname}\n*Followers* : ${stats.followerCount}\n*Followings* : ${stats.followingCount}\n*Posts* : ${stats.videoCount}\n*Luv* : ${stats.heart}\n`
+						buffer = await getBuffer(user.avatarLarger)
+						client.sendMessage(from, buffer, image, {quoted: mek, caption: teks})
+					} catch (e) {
+						console.log(`Error :`, color(e,'red'))
+						reply('Kemungkinan username tidak valid')
+					}
+					break*/
+				/*case 'nulis':
+				case 'tulis':
+					if (args.length < 1) return reply('Yang mau di tulis apaan?')
+					teks = body.slice(7)
+					reply(mess.wait)
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/nulis?text=${teks}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					buff = await getBuffer(anu.result)
+					client.sendMessage(from, buff, image, {quoted: mek, caption: mess.success})
+					break*/
+				/*case 'url2img':
+					tipelist = ['desktop','tablet','mobile']
+					if (args.length < 1) return reply('Tipenya apa um?')
+					if (!tipelist.includes(args[0])) return reply('Tipe desktop|tablet|mobile')
+					if (args.length < 2) return reply('Urlnya mana um?')
+					if (!isUrl(args[1])) return reply(mess.error.Iv)
+					reply(mess.wait)
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/url2image?tipe=${args[0]}&url=${args[1]}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					buff = await getBuffer(anu.result)
+					client.sendMessage(from, buff, image, {quoted: mek})
+					break*/
+				/*case 'tstiker':
+				case 'tsticker':
+					if (args.length < 1) return reply('Textnya mana um?')
+					ranp = getRandom('.png')
+					rano = getRandom('.webp')
+					teks = body.slice(9).trim()
+					anu = await fetchJson(`https://mhankbarbars.herokuapp.com/api/text2image?text=${teks}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					exec(`wget ${anu.result} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
+						fs.unlinkSync(ranp)
+						if (err) return reply(mess.error.stick)
+						buffer = fs.readFileSync(rano)
+						client.sendMessage(from, buffer, sticker, {quoted: mek})
+						fs.unlinkSync(rano)
+					})
+					break*/
 				case 'tagall':
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
@@ -379,6 +449,33 @@ async function starts() {
 						members_id.push(mem.jid)
 					}
 					mentions(teks, members_id, true)
+					break
+				case 'clearall':
+					if (!isOwner) return reply('Kamu siapa?')
+					anu = await client.chats.all()
+					client.setMaxListeners(25)
+					for (let _ of anu) {
+						client.deleteChat(_.jid)
+					}
+					reply('Sukses delete all chat :)')
+					break
+				case 'bc':
+					if (!isOwner) return reply('Kamu siapa?')
+					if (args.length < 1) return reply('.......')
+					anu = await client.chats.all()
+					if (isMedia && !mek.message.videoMessage || isQuotedImage) {
+						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+						buff = await client.downloadMediaMessage(encmedia)
+						for (let _ of anu) {
+							client.sendMessage(_.jid, buff, image, {caption: `[ Ini Broadcast ]\n\n${body.slice(4)}`})
+						}
+						reply('Suksess broadcast')
+					} else {
+						for (let _ of anu) {
+							sendMess(_.jid, `[ Ini Broadcast ]\n\n${body.slice(4)}`)
+						}
+						reply('Suksess broadcast')
+					}
 					break
 				case 'add':
 					if (!isGroup) return reply(mess.only.group)
@@ -422,42 +519,6 @@ async function starts() {
 					}
 					mentions(teks, groupAdmins, true)
 					break
-					
-				//author
-				case 'setprefix':
-					if (args.length < 1) return
-					if (!isOwner) return reply(mess.only.ownerB)
-					prefix = args[0]
-					reply(`Prefix berhasil di ubah menjadi : ${prefix}`)
-					break
-				case 'clearall':
-					if (!isOwner) return reply('Kamu siapa?')
-					anu = await client.chats.all()
-					client.setMaxListeners(25)
-					for (let _ of anu) {
-						client.deleteChat(_.jid)
-					}
-					reply('Sukses delete all chat :)')
-					break
-				case 'bc':
-					if (!isOwner) return reply('Kamu siapa?')
-					if (args.length < 1) return reply('.......')
-					anu = await client.chats.all()
-					if (isMedia && !mek.message.videoMessage || isQuotedImage) {
-						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-						buff = await client.downloadMediaMessage(encmedia)
-						for (let _ of anu) {
-							client.sendMessage(_.jid, buff, image, {caption: `[ Ini Broadcast ]\n\n${body.slice(4)}`})
-						}
-						reply('Suksess broadcast')
-					} else {
-						for (let _ of anu) {
-							sendMess(_.jid, `[ Ini Broadcast ]\n\n${body.slice(4)}`)
-						}
-						reply('Suksess broadcast')
-					}
-					break
-				
 				case 'toimg':
 					if (!isQuotedSticker) return reply('❌ reply stickernya um ❌')
 					reply(mess.wait)
@@ -472,7 +533,30 @@ async function starts() {
 						fs.unlinkSync(ran)
 					})
 					break
-				
+				/*case 'simi':
+					if (args.length < 1) return reply('Textnya mana um?')
+					teks = body.slice(5)
+					anu = await simih(teks) //fetchJson(`https://mhankbarbars.herokuapp.com/api/samisami?text=${teks}`, {method: 'get'})
+					//if (anu.error) return reply('Simi ga tau kak')
+					reply(anu)
+					break*/
+				/*case 'simih':
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (args.length < 1) return reply('Hmmmm')
+					if (Number(args[0]) === 1) {
+						if (isSimi) return reply('Mode simi sudah aktif')
+						samih.push(from)
+						fs.writeFileSync('./src/simi.json', JSON.stringify(samih))
+						reply('Sukses mengaktifkan mode simi di group ini ✔️')
+					} else if (Number(args[0]) === 0) {
+						samih.splice(from, 1)
+						fs.writeFileSync('./src/simi.json', JSON.stringify(samih))
+						reply('Sukes menonaktifkan mode simi di group ini ✔️')
+					} else {
+						reply('1 untuk mengaktifkan, 0 untuk menonaktifkan')
+					}
+					break*/
 				case 'welcome':
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
